@@ -74,6 +74,7 @@ week6-neobank-aria-agent/
 ├── seed_data.py
 ├── neobank.db
 ├── requirements.txt
+├── redteam/                 # Promptfoo configuration, Python provider, and tests
 ├── architecture.html
 ├── security_guide.html
 ├── .gitignore
@@ -93,6 +94,7 @@ week6-neobank-aria-agent/
 | `architecture.html` | In-app architecture reference |
 | `security_guide.html` | In-app AI security guide |
 | `requirements.txt` | Python dependencies |
+| `redteam/` | Promptfoo attack suites, agent adapter, pinned Node dependencies, and offline adapter tests |
 
 ---
 
@@ -139,6 +141,69 @@ The sidebar includes guided security challenges covering areas such as:
 - PII extraction
 
 Participants are expected to test ARIA within the scope of the fictional workshop environment.
+
+---
+
+## Test ARIA with Promptfoo
+
+Promptfoo checks how ARIA responds to attacks such as requests for another
+customer's data, prompt injection, and attempts to bypass its rules. You do not
+need to start Streamlit.
+
+### 1. Set up
+
+Install Node.js 22.22.0 or newer. From the project root, activate the Python
+virtual environment and install dependencies as shown in Quick Start. Then run:
+
+```bash
+cd redteam
+npm ci
+```
+
+Create a `.env` file inside `redteam/`:
+
+```dotenv
+OPENAI_API_KEY=your-key-here
+```
+
+Keep your key private. This file is ignored by Git.
+
+### 2. Run the tests
+
+Run these commands from `redteam/` with your Python environment active:
+
+```bash
+# Start with nine fixed tests.
+npm run smoke -- --env-file .env
+
+# Generate a broader set of attacks.
+npm run generate -- --env-file .env --remote
+
+# Review generated.yaml, then run the scan.
+npm run scan -- --env-file .env --remote
+
+# View the results.
+npm run report
+```
+
+Tests use paid model calls. The broader suite also uses Promptfoo's remote attack
+services, so use only the fictional workshop data.
+
+### What is being tested?
+
+- **Plugins** choose what to test, such as unauthorized data access (`bola`),
+  privacy leaks (`pii:direct`), or unsupported actions (`excessive-agency`).
+- **Strategies** choose how to attack, such as direct requests (`basic`), encoded
+  prompts (`base64`), or escalating conversations (`crescendo`).
+- **`provider.py`** connects Promptfoo to ARIA, runs it as Alex Mercer against a
+  fresh temporary database, and returns responses for grading.
+
+ARIA is intentionally vulnerable, so some security tests are expected to fail.
+A failed test may reveal a weakness; an execution error means the test could not
+complete normally. Review the results manually.
+
+See the [detailed Promptfoo guide](redteam/README.md) for additional tests,
+configuration, and adapter checks.
 
 ---
 
