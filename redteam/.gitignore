@@ -1,0 +1,7 @@
+node_modules/
+generated*.yaml
+results*.json
+results*.html
+.promptfoo/
+logs/
+/redteam.yaml

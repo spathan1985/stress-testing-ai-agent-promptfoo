@@ -1,0 +1,11 @@
+{
+  "name": "aria-redteam",
+  "private": true,
+  "scripts": {
+    "smoke": "promptfoo eval -c smoke.yaml --no-cache",
+    "generate": "promptfoo redteam generate -c promptfooconfig.yaml -o generated.yaml",
+    "scan": "promptfoo redteam eval -c generated.yaml --no-cache",
+    "report": "promptfoo redteam report"
+  },
+  "devDependencies": { "promptfoo": "0.125.1" }
+}
